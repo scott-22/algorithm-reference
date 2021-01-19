@@ -4,12 +4,12 @@ Personal reference for data structures and algorithms for competitive programmin
 
 The names of algorithms or important data structures will be bolded. The names of problems (not actual names in any scientific literature, just for my personal ease of access) will be in unbolded caps, start and end with *, and be provided at the beginning of an algorithm description.
 
-##### Table of Contents
+#### Table of Contents
 [Fundamental Ideas](#fundamentalideas)  
 [Math](#math)  
 [Arrays](#arrays)  
 [Sequences](#sequences)  
-[Recursion](#fundamentalideas)  
+[Recursion](#recursion)  
 [Strings](#strings)  
 [Graphs](#graphs)  
 [Dynamic Programming](#dynamicprogramming)  
