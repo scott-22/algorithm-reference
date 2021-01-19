@@ -4,6 +4,17 @@ Personal reference for data structures and algorithms for competitive programmin
 
 The names of algorithms or important data structures will be bolded. The names of problems (not actual names in any scientific literature, just for my personal ease of access) will be in unbolded caps, start and end with *, and be provided at the beginning of an algorithm description.
 
+##### Table of Contents
+[Fundamental Ideas](#fundamentalideas)  
+[Math](#math)  
+[Arrays](#arrays)  
+[Sequences](#sequences)  
+[Recursion](#fundamentalideas)  
+[Strings](#strings)  
+[Graphs](#graphs)  
+[Dynamic Programming](#dynamicprogramming)  
+
+<a name="fundamentalideas"/>
 
 # Fundamental Ideas
 ## Overview:
@@ -20,6 +31,8 @@ Program flow can be changed through goto statements and loops, or functions (bei
 
 Data structure := a hypothetical structure that stores data in a certain way for reading/modification  
 Data structures are usually an implementation of a mathematical concept, or at least can be described mathematically. Each data structure has different properties, which can be used to solve problems, or combined to form new data structures.
+
+<a name="math"/>
 
 # Math
 ## Overview:
@@ -51,7 +64,7 @@ a^b = (a^(b/2))^2
 
 Just apply that recursively for logarithmic time exponentiation.
 
-
+<a name="arrays"/>
 
 # Arrays
 ## Overview:
@@ -140,8 +153,7 @@ When applying an operation on a subarray, it’s only possible to do it in O(n) 
 
 If the operations are something like adding to subarrays, and there are significantly less operations than array elements, we can pair together the operations and store them in a separate array, as a kind of coordinate compression. For example, if we were to add m from index i to j, we would put pairs (i, m) and (j+1, -m) into the other array. At the end, we sort the other array, and iterate through the operations instead of each element.
 
-
-
+<a name="sequences"/>
 
 # Sequences
 ## Overview:
@@ -163,7 +175,7 @@ We can again speed this up by sorting, and by drawing inspiration from the diffe
 ### Scheduling
 Many task scheduling problems can be solved by expressing each task as an ordered pair and then sorting them. The pair could be (starting time, duration), or (deadline, duration). This makes them essentially like intervals, but in this case it may be to put the most amount of tasks in a set amount of time, or to 
 
-
+<a name="recursion"/>
 
 # Recursion
 ## Overview:
@@ -190,10 +202,13 @@ Also called mutual recursion. It occurs where two or more functions recursively 
 ### Backtracking
 Backtracking is the process of solving a problem with a kind of brute force, recursive approach. It resembles DFS, where we start at a beginning state, and want to reach a success state. At each call of the solving function, we take every single possible path to the next state. If we ever reach a failed state, we go back to the last non-failed state and continue with the other paths. It’s slow, but it works.
 
+<a name="strings"/>
 
 # Strings
 ## Overview:
 String hashing :(
+
+<a name="graphs"/>
 
 # Graphs
 ## Overview:
@@ -274,8 +289,7 @@ The first is “Kahn’s algorithm” where we keep track of the indegree of eac
 
 The second is through a DFS and a stack, and keeping track of all vertices’ states, just like with a normal DFS. We pick a random vertex, and begin a DFS from that vertex. Whenever from a certain vertex we have exhausted all options, we push that vertex to the stack (e.g., if we reach a vertex with outdegree 0, or if we finish the search through all of a vertex’s child vertices). This ensures that all vertices are pushed to the stack before its parent. If we ever bump into a node that is currently in our path, we know there is a cycle. If we bump into a node that has already been finished, then we can skip over that node.
 
-
-
+<a name="dynamicprogramming"/>
 
 # Dynamic Programming
 ## Overview:
