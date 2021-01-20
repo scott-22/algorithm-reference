@@ -1,6 +1,6 @@
 # Algorithms and Data Structures
 
-Personal reference for data structures and algorithms for competitive programming. This would be awful to learn from, and it’s meant to be a refresher only. Perpetually work-in-progress.
+Personal reference for data structures and algorithms for competitive programming. This would be awful to learn from, and it’s meant to be a refresher only. It’s also perpetually work-in-progress.
 
 The names of algorithms or important data structures will be bolded. The names of problems (not actual names in any scientific literature, just for my personal ease of access) will be in unbolded caps, start and end with *, and be provided at the beginning of an algorithm description.
 
@@ -266,12 +266,23 @@ There is **BFS** and **DFS**, implemented with a queue and stack respectively. F
 ### Queries:
 #### \*SHORTEST-PATH*
 To get the shortest path in an unweighted graph, we can simply use **BFS**.
-Otherwise, we can use the **Dijkstra** algorithm. It is a greedy algorithm similar to **BFS**, but rather than using a normal queue we use a priority queue and sort by weights (or we just iterate if we have a complete graph). This ensures we make the optimal decision at any point in time.
+Otherwise, we can use the **Dijkstra** algorithm. It is a greedy algorithm similar to **BFS**, but we keep track of the “temporary distance” of each node from the source. At the beginning, we set all of these distances to be infinity. Then, for each iteration, we select the next unvisited node with the least temporary distance, mark it as visited, finalize its distance, and then go through all of its neighbours and see if we can get a shorter temporary distance. That’s why rather than using a normal queue we use a priority queue and sort by weights (or we just iterate if we have a complete graph). This ensures we make the optimal decision at any point in time. We end up potentially adding every edge to the priority queue, getting O(E log E) time for that part. For each next node, we also must remove from the priority queue, getting O(V log E). In total, we have O((E + V) log E) time. Since there are at least most V^2 edges, we can simplify it to O(E log V) time. Note that when E becomes very large (e.g, V^2) it essentially becomes quadratic, and it would be better not to use a priority queue and instead just to iterate for the naive O(V^2) implementation. 
 
-**Dijkstra** fails if we have negative weights, so in that case we use the **Floyd-Warshall** algorithm. If we need to find multiple shortest path queries (shortest path between multiple points), it’s also more efficient to use **Floyd-Warshall**.
+**Dijkstra** fails if we have negative weights, so in that case we use the **Bellman-Ford** algorithm.
+
+If we need to find multiple shortest path queries (shortest path between multiple points), it’s more efficient to use **Floyd-Warshall**. 
 
 #### \*CONNECTED-COMPONENTS*
 A connected component of a graph is a set of vertices such that a path exists from each vertex to each other one. A very intuitive way of determining whether two vertices lie on the same connected component is to use **BFS**. If we have multiple connected component queries and we also have a completed graph, we can simply iterate through every node and do a **BFS** if it hasn’t been visited, for O(n) time. An online way of determining connected components is to use a **disjoint set**.
+
+#### \*MINIMUM-SPANNING-TREE*
+A minimum spanning tree of a connected undirected graph is a subset of its edges such that  
+1. The set of edges and nodes form a tree
+2. The total sum of the weights of this subset of edges is minimized
+There also exists a minimum spanning forest, for a non-connected undirected graph. There are two algorithms to find a MST, both of which are greedy.
+
+The first is **Prim’s algorithm**, where we start at one node and eventually add other nodes to our tree until we have a MST. As it turns out, it works very similarly to **Dijkstra**. We start with any arbitrary node, and then put all outgoing edges into a priority queue, sorted by weights. Then, at each iteration, we pick the next unvisited node with the least edge weight, mark it as visited (and keep track of the edge too), then add all of it’s neighbours that aren’t visited into the priority queue. That gives us exactly the same complexity as **Dijkstra**: O(E log V) time complexity and O(E) space complexity.  
+The second algorithm is **Kruskal’s algorithm**, where we add edges to our minimum spanning forest until it becomes a tree (or not, if the graph is not connected). We must also keep track of \*CONNECTED-COMPONENTS* so as to avoid cycles. We first sort all the edges by their weight. At each iteration, we take the edge with the least weight, given it doesn’t form a cycle. We then merge the connected components of the two endpoints, and repeat. Using a **disjoint set** to keep track of connected components, we have basically constant time queries and merges. In total we get O(E log E + V) = O(E log V) time, and O(E) space, the same as Prim’s.
 
 ### Cycles:
 We use **DFS** to find cycles as well as their lengths in both directed and undirected graphs.
