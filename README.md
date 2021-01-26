@@ -2,7 +2,7 @@
 
 Personal reference for data structures and algorithms for competitive programming. This would be awful to learn from, and it’s meant to be a refresher only. It’s also perpetually work-in-progress.
 
-The names of algorithms or important data structures will be bolded. The names of problems (not actual names in any scientific literature, just for my personal ease of access) will be in unbolded caps, start and end with *, and be provided at the beginning of an algorithm description.
+The names of algorithms or important data structures will be bolded. The names of problems or techniques (not actual names in any scientific literature, just for my personal ease of access) will be in unbolded caps, start and end with *, and be provided at the beginning of an algorithm description.
 
 ### Table of Contents
 [Fundamental Ideas](#fundamentalideas)  
@@ -93,20 +93,17 @@ and more. The same logic applies to transformations, where a certain property is
 ## Properties/Queries
 Use some sort of pattern to prevent searching through every possibility. If there is no pattern, sort it. For a single value, use binary search. For a pair use a two pointers approach. For range queries, use a prefix array or a tree approach. Be able to use other data structures to store relevant information that can solve the problem at hand.
 
-### Searching:
+### Searches:
 #### \*SEARCH-VALUE*
 When searching for a single value, the worst case is to look through each value, giving O(n) time. For an unsorted array, there isn’t any structure, so we can’t do it efficiently. For a sorted array, we can do **binary search** in O(log n) time.
 
 #### \*SEARCH-TUPLE*
-When searching for a pair that either adds or subtracts to a value, the worst case is O(n^2) time, pretty intuitively. However, in a sorted array, we can use **two pointers** to do it in O(n) time. This works since we always move the pointers towards each other. In fact, for subsets of length k (i.e, k random values of the array that add or subtracts to a value), we can do it in O(n^(k-1)) time, since we can go through each element, then take the remaining elements k-1 at a time.
+When searching for a pair that either adds or subtracts to a value, the worst case is O(n^2) time, pretty intuitively. However, in a sorted array, we can use the **two pointers** approach to do it in O(n) time. This works since we always move the pointers towards each other. In fact, for subsets of length k (i.e, k random values of the array that add or subtracts to a value), we can do it in O(n^(k-1)) time, since we can go through each element, then take the remaining elements k-1 at a time.
 
 There is another approach to this problem, and it can be a bit more generalized. For searching a pair that sums up to s, you can iterate through every element i, then do a **binary search** for s-a[i]. Thus you can find a pair in O(n log n) time. In fact, for subsets of length k, we can do it in O(n^(k-1) * log n) time, which is always log n times slower than the multiple pointers approach, but the idea can be applied to relatively more problems.
 
-#### \*MAX-SUBARRAY-VALUE*
-Let’s say we had an array to be split into k contiguous subarrays, and we’d like to maximize the sum of any subarray. The naive solution would be to iterate through and find each of the k subarrays, which even if we used a **PSA** to find the sum, it would still take O(n^(k-1)) time. Rather, we could do a binary search of the maximum value. Let’s say the total sum of the array was z. We would binary search all the values between 1 and z, and set that as the maximum. Then, we can iterate through the **PSA** and mark off whenever we surpass that value, and see if we have more or less groups than the target value k. Thus, we would only need O(n log z) time, which can be much less depending on the value of z.
-
 ### Range Queries:
-Obviously the worst case for doing a range query is just to go through each of the values.
+Obviously the worst case for doing a range query is just to go through each of the values (linear in both array length and query number). There’s often better ways of doing so, either with lazy evaluation or preprocessing.
 
 #### \*RSQ*
 For range sum queries, and some others, we can do a **prefix sum array (PSA)**, giving us O(1) query complexity and O(n) update complexity. We can apply this to a 2D array too, making a **2D prefix sum array** that allows calculation of a rectangular sum query using the principle of inclusion exclusion. It gets the sum of the rectangle defined by [0][0] as the top left corner, and [x][y] as the bottom right, which is the 2D equivalent of a prefix sum. Then we can just manipulate the four corners of the rectangle we want to sum. It calculates the query in O(1) complexity, and initializes/updates in O(n^2) complexity.
@@ -118,18 +115,20 @@ For range minimum queries, and some others, one way is to use a **sparse table**
 
 The sparse table can also compute the **lowest common ancestor** of trees.
 
-#### \*RQ-MISC1*
-Let’s say we wanted to find a property of all elements in an array except in a certain subarray, let’s say a[i, j]. We can create a prefix and suffix array for that property, and find the property of the subarray a[0, i] with the prefix array, and the property of the subarray a[i, end] with the suffix array, and combine the two ranges.
+#### \*EXCEPT-SUBARRAY-QUERY*
+Let’s say we wanted to find a property of all elements in an array except in a certain subarray, let’s say a[i, j]. It’s kind of like the opposite of a range query. We can create both a prefix and suffix array for that property, and find the property of the subarray a[0, i] with the prefix array, and the property of the subarray a[i, end] with the suffix array, and combine the two ranges.
 
-### Inversion count:
+### Inversion:
 #### \*INVERSION*
 An inversion of array A is two indices i and j such that i < j and A[i] > A[j]. Inversions can be counted through brute force in O(n^2) complexity, by iterating through each element, and checking for the number of elements to the left of it (index less than it) and a value greater than it. We can do this faster with a **BIT**.
 
 ### Subsequences and Subarrays:
+Many subsequence problems can be solved through DP. For many problems on subarrays, especially when involving their cumulative sum, it’s helpful to turn them into a **PSA** and then use one of the searching algorithms.
 #### \*LIS*
-For longest increasing/decreasing subsequences, the naive solution is recursive, and in O(n!) time (I think). However, we can use **DP** for a more efficient solution.
+For longest increasing/decreasing subsequences, the naive solution is recursive, and in O(n!) time (TODO: DOUBLE CHECK). However, we can use **DP** for a more efficient solution.
 
-For many problems on subarrays, especially when involving their cumulative sum, it’s helpful to turn them into a **PSA** and then use one of the searching algorithms. For example, take the painter’s partition problem.
+#### \*MAX-SUBARRAY-VALUE* or \*DISTRIBUTE-VALUE*
+Let’s say we had an array to be split into k contiguous subarrays, and we’d like to maximize the sum of any subarray. The naive solution would be to iterate through and find each of the k subarrays, which even if we used a **PSA** to find the sum, it would still take O(n^(k-1)) time. Rather, we could do a binary search of the maximum value. Let’s say the total sum of the array was z. We would binary search all the values between 1 and z, and set it as the maximum. Then, we can iterate through the **PSA** and mark off whenever we surpass that value, and see if we have more or less groups than the target value k. Thus, we would only need O(n log z) time, which can be much less depending on the value of z.
 
 #### \*PAINTERS-PARTITION*
 The most generalized form of this problem is to split an array into k contiguous subarrays such that
@@ -137,10 +136,11 @@ The most generalized form of this problem is to split an array into k contiguous
 or
 2. The largest sum of all subarrays is minimized.
 
-Both of these should be equivalent (have not proved yet), but lead into different methods. 
+Both of these should be equivalent, but lead into different methods. TODO: PROVE THIS
 
-For 1., after converting the array into a **PSA**, you can simply do the \*SEARCH-TUPLE* problem, and find a tuple of indices using binary search (I don’t think two pointers works here).
-For 2., after converting the array into a **PSA**, you can do the \*DISTRIBUTE-VALUE* problem, also using binary search.
+For 1., after converting the array into a **PSA**, you can simply do a repeated \*SEARCH-TUPLE* problem, and find a tuple of indices using **binary search** (two pointers doesn’t work here, since we need to find multiple tuples in the array at specific positions). TODO: EXPAND ON THIS ALGORITHM
+
+For 2., after converting the array into a **PSA**, you can do the \*DISTRIBUTE-VALUE* problem, also using binary search. This works in a pseudo-polynomial O(n log s) time, where s is the sum of all elements in the array.
 
 ## Transformations
 Different sorts of transformations can be applied to arrays and subarrays. The minimum complexity is O(n), so we generally try to achieve this with some smart tricks.
@@ -149,7 +149,7 @@ Different sorts of transformations can be applied to arrays and subarrays. The m
 #### \*SORT*
 Involves two major components: comparisons and re-arrangement of the array. Minimizing the running time of the entire sort involves minimizing running time of both of them.
 
-Lower bound: n log n comparisons (do proof later)  
+Lower bound: n log n comparisons  
 In practice, just use the built-in sort function.  
 Lots of arrays can be sorted to avoid going through all subsets, and instead using structure to be more efficient.  
 
@@ -225,8 +225,12 @@ String hashing :(
 ### Overview:
 Borrows from graph theory in math. A special type of connected graph with no cycles is called a “tree”. Multiple trees makes a “forest”.
 
+### Transversal:
+There is **BFS** and **DFS**, implemented with a queue and stack respectively. They work for both directed and undirected graphs. **DFS** for transversal is a bit complicated, as it involves keeping track of the state of each vertex to avoid cycles. It’s easier to use recursion (usually).
+
 ## Trees
 A few definitions to get started.
+
 Tree := a connected graph with any n vertices and n-1 edges  
 Root := the node considered to be the starting point of the tree, with depth 0  
 Depth := the depth of a node is the distance from that node to the root, while the depth
@@ -239,12 +243,12 @@ Center := either one or two nodes in the tree such that the depth is minimized (
 	center is thus the centre node(s) of the diameter)  
 Radius := the longest possible path(s) starting at a center of the tree
 
-### Center, Diameter, Radius:
+### Center, Diameter, Radius, Depth:
 These ideas are probably the most important in terms of solving tree-specific problems.
 
 Finding the diameter is pretty simple. Start at a random node _s_ and find the farthest node from it, called _u_. This can be done with **BFS** or **DFS**. Then root the tree at _u_, and find the farthest node _v_, repeating the same process. _u_ and _v_ are then endpoints of a diameter. To find the diameter itself, during the second transversal starting at _u_, keep track of each node’s parent. Then, follow the path backwards from _v_ to _u_.
 
-Once the diameter path is obtained, the center and radius are trivial. Some problems that require knowing the centre, diameter, and radius are below:
+Once the diameter path is obtained, the center, radius, and depth are trivial. Some problems that require knowing the centre, diameter, and radius are below:
 
 #### \*DEPTH-QUERY*
 To get the depth of a tree by arbitrarily rooting it any node, let’s say _u_, we need to find the maximum distance from _u_ to any other part of the tree. This distance will always be part of the diameter. To prove this, let p(_a_, _b_) and d(_a_, _b_) be the path and distance from _a_ to _b_, respectively. If the diameter of a tree was p(_m_, _n_), and there was another node _x_ such that d(_u_, _x_) > _max_(_d_(_u_, _m_), _d_(_u_, _n_)), then that means either _d_(_m_, _x_) or _d_(_n_, _x_) is larger than _d_(_m_, _n_), which is a contradiction. Thus the depth of a node _u_ is _max_(_d_(_u_, _m_), _d_(_u_, _n_)). How can we find that value? We could very easily simply do **BFS** three times: first to find one endpoint of the diameter, then to find the degree from that node as well as the other endpoint of the diameter, finally to find the degree from the other endpoint. With multiple queries, we just need to store these degrees for an O(1) query.
@@ -260,43 +264,72 @@ The **Euler tour** of the tree can find the \*LCA* in O(1) time. It compresses t
 **Binary Lifting** can also find the \*LCA*, but in O() time.
 
 ## General Graphs
-### Transversal:
-There is **BFS** and **DFS**, implemented with a queue and stack respectively. For **DFS**, it’s easier to use recursion and just keep track of the states of all the nodes.
 
-### Queries:
+### Paths:
 #### \*SHORTEST-PATH*
+The shortest path problem is probably the most famous graph problem. Each edge is given a weight, and the weight of a path is defined as the sum of the weights of each composing edge. In an unweighted graph, all edges can be seen as having a weight of 1 unit. The aim is to find the path with the minimum weight. All the algorithms below work for both directed and undirected graphs.
+
+##### SINGLE SOURCE
 To get the shortest path in an unweighted graph, we can simply use **BFS**.
-Otherwise, we can use the **Dijkstra** algorithm. It is a greedy algorithm similar to **BFS**, but we keep track of the “temporary distance” of each node from the source. At the beginning, we set all of these distances to be infinity. Then, for each iteration, we select the next unvisited node with the least temporary distance, mark it as visited, finalize its distance, and then go through all of its neighbours and see if we can get a shorter temporary distance. That’s why rather than using a normal queue we use a priority queue and sort by weights (or we just iterate if we have a complete graph). This ensures we make the optimal decision at any point in time. We end up potentially adding every edge to the priority queue, getting O(E log E) time for that part. For each next node, we also must remove from the priority queue, getting O(V log E). In total, we have O((E + V) log E) time. Since there are at least most V^2 edges, we can simplify it to O(E log V) time. Note that when E becomes very large (e.g, V^2) it essentially becomes quadratic, and it would be better not to use a priority queue and instead just to iterate for the naive O(V^2) implementation. 
 
-**Dijkstra** fails if we have negative weights, so in that case we use the **Bellman-Ford** algorithm.
+Otherwise, we can use the **Dijkstra** algorithm, which works if all weights are positive. It is a greedy algorithm similar to **BFS**, but we keep track of the temporary distance of each node from the source. At the beginning, we set all of these distances to be infinity. Then, for each iteration, we take the node with the minimum temporary distance and finalize its distance. We know it’s the optimal solution since if the path contained any other node with a greater or equal temporary distance, then we’d either have the same or greater distance. After that, we perform “relaxation”, which is just updating the minimum path length to all the other nodes. The actual implementation of that is by visiting that node (and marking it as so), and checking all of its neighbours to see if it can reduce the distance. Then, if it can, we need to add it to some sort of queue that’s able to get the minimum temporary distance. That’s why rather than using a normal queue we use a priority queue and sort by weights (or we just iterate if we have a complete graph). This ensures we make the optimal decision at any point in time. Note that this property is no longer true if there are negative weights. We end up potentially adding every edge to the priority queue, getting O(E log E) time for that part. For each next node, we also must remove from the priority queue, getting O(V log E). In total, we have O((E + V) log E) time. Since there are at least most V^2 edges, we can simplify it to O(E log V) time. Note that when E becomes very large (e.g, V^2) it essentially becomes quadratic, and it would be better not to use a priority queue and instead just to iterate for the naive O(V^2) implementation. 
 
-If we need to find multiple shortest path queries (shortest path between multiple points), it’s more efficient to use **Floyd-Warshall**. 
+**Dijkstra** fails if we have negative weights, so in that case we use the **Bellman-Ford** algorithm. It starts by setting all distances to infinity, and the source distance to 0. Then, for relaxation, instead of finding the node with the least temporary distance, it iterates through all edges and updates the distance of a node if there’s a better path. This is guaranteed to relax at least one node. TODO: PROVE THIS. That’s why we perform this step V-1 times, for a total of O(EV) runtime.
 
+There’s another better algorithm based on **Bellman-Ford**, called the **Shortest Path Faster Algorithm**, or the **SPFA**. Similarly to the other two, it sets all node distances to infinity, and the source to 0. It also uses a queue (normal queue, not priority queue) to keep track of next nodes. At each iteration, it pops a node from the queue, and then relaxes all of its neighbours. Unlike **Dijkstra** however, whenever it updates a neighbouring node, it adds it to the queue (possibly more than once), since there’s a chance it can update other paths from that node. At each node, the algorithm can potentially push all the other edges into the queue, which means it runs in O(EV) time. However, experimentally, it runs in O(E) time, a better complexity than all of the other algorithms. This allows it to always outperform **Bellman-Ford**, and usually **Dijkstra**.
+
+##### ALL PAIRS
+If we need to find multiple shortest path queries (shortest path between multiple points), it’s usually more efficient to use **Floyd-Warshall**. The Floyd-Warshall algorithm is a dynamic programming algorithm, with O(V^2) space complexity and O(V^3) time complexity. It works for negative weights (no negative cycles though) as well. For denser graphs, this beats out running **Dijkstra** V times resulting in O(VE log V) → O(V^3 log V). The substructure used is that  
+_distance(i, j, k) = min(distance(i, j, k-1), distance(i, k-1, k-1)+distance(k-1, j, k-1))_  
+where _distance(i, j, k)_ represents the minimum distance from _i_ to _j_ where the path only consists of those two nodes and optionally the nodes from 1 to _k_. It’s quite easy to see why it runs in cubic time, and by iterating through _k_ (similar to the space optimized knapsack) we only need quadratic space.
+
+#### \*KTH-SHORTEST-PATH*
+This problem is similar to the \*SHORTEST-PATH* problem, but instead of finding the shortest, we find the k-th shortest (either strictly, i.e. the k-th minimum out of all possible path _lengths_, or non-strictly, i.e. the k-th minimum out all possible _paths_).
+
+There’s a special case to consider for the second shortest path if we know the start node _s_ and the end node _k_. This technique works for the strictly 2nd shortest path in undirected graphs. We can compute it by solving \*SHORTEST-PATH* twice: once from the beginning and once from the end. This is a very useful technique that’s used very often for all sorts of graph problems. Then, for each edge _<u, v>_, we find _dst(s, u) + <u, v> + dst(v, k)_. If this value is greater than the shortest path, we consider it as a potential 2nd shortest path. TODO: PROVE THIS. If we’re allowed to visit each edge more than once, we can simply perform the same thing with the edge _<v, u>_.
+
+#### \*BOTTLENECK-PATH*
+What’s referred to as the widest path problem defines the bottleneck of a path to be the edge with the least weight that makes up this path. The problem seeks to find the shortest path that maximizes the value of the bottleneck (in other words, the shortest path that maximizes the minimum value of any of the edges it’s made up of), akin to the maximin problem from other fields of math. It’s also often useful to do the opposite: to find the path that minimizes the maximum edge weight in a graph, akin to the minimax problem.
+
+##### SINGLE SOURCE
+For the widest path problem, we can slightly modify **Dijkstra**. Instead of keeping track of distance, we’re keeping track of the temporary maximum bottleneck from the source to another node. At each iteration, we take the node _n_ with the highest temporary bottleneck, finalize its bottleneck, and perform relaxation of its neighbours. The relaxation step updates the temporary bottleneck of a _v_ only if _min(w(n, v), b(n)) > b(v)_ where _b(v)_ is the temporary bottleneck of node _v_ (or finalized, in the case of _n_). The time complexity ends up being the same as that of **Dijkstra**, and it similarly works on undirected and directed graphs.
+
+The process is almost exactly the same for the minimax equivalent. However, for each iteration we instead take the node _n_ with the minimum max-edge, and for the relaxation of a neighbour _v_, we update _m(v)_ only if _max(w(n, v), m(n)) < m(v)_ where _m(v)_ is the minimum max-edge of node _v_.
+
+##### ALL PAIRS
+One way to find the path with the maximum bottleneck is to create a _maximum_ spanning tree, which is almost exactly the same as the \*MINIMUM-SPANNING-TREE*  problem. This only works on undirected graphs. Once we have our MST, it’s quite simple to find the single path between each two nodes using a transversal in O(n) time.
+
+The minimax equivalent of this is quite literally the \*MINIMUM-SPANNING-TREE* problem.
+
+### Components:
 #### \*CONNECTED-COMPONENTS*
-A connected component of a graph is a set of vertices such that a path exists from each vertex to each other one. A very intuitive way of determining whether two vertices lie on the same connected component is to use **BFS**. If we have multiple connected component queries and we also have a completed graph, we can simply iterate through every node and do a **BFS** if it hasn’t been visited, for O(n) time. An online way of determining connected components is to use a **disjoint set**.
+A connected component of a graph is a set of vertices such that a path exists from each vertex to each other one. A very intuitive way of determining whether two vertices lie on the same connected component is to use **BFS** or **DFS**. If we have multiple connected component queries and we also have a completed graph, we can simply iterate through every node and do a **BFS** if it hasn’t been visited, for O(n) time. An online way of determining connected components is to use a **disjoint set**.
+
+#### \*ARTICULATION-POINTS* or \*BRIDGE-FINDING*
+
 
 #### \*MINIMUM-SPANNING-TREE*
-A minimum spanning tree of a connected undirected graph is a subset of its edges such that  
-1. The set of edges and nodes form a tree
+A minimum spanning tree (MST) of a connected undirected graph is a subset of its edges such that  
+1. The set of edges and nodes form a tree (forms a spanning tree, or ST)
 2. The total sum of the weights of this subset of edges is minimized
 There also exists a minimum spanning forest, for a non-connected undirected graph. There are two algorithms to find a MST, both of which are greedy.
 
-The first is **Prim’s algorithm**, where we start at one node and eventually add other nodes to our tree until we have a MST. As it turns out, it works very similarly to **Dijkstra**. We start with any arbitrary node, and then put all outgoing edges into a priority queue, sorted by weights. Then, at each iteration, we pick the next unvisited node with the least edge weight, mark it as visited (and keep track of the edge too), then add all of it’s neighbours that aren’t visited into the priority queue. That gives us exactly the same complexity as **Dijkstra**: O(E log V) time complexity and O(E) space complexity.  
-The second algorithm is **Kruskal’s algorithm**, where we add edges to our minimum spanning forest until it becomes a tree (or not, if the graph is not connected). We must also keep track of \*CONNECTED-COMPONENTS* so as to avoid cycles. We first sort all the edges by their weight. At each iteration, we take the edge with the least weight, given it doesn’t form a cycle. We then merge the connected components of the two endpoints, and repeat. Using a **disjoint set** to keep track of connected components, we have basically constant time queries and merges. In total we get O(E log E + V) = O(E log V) time, and O(E) space, the same as Prim’s.
+The first is **Prim’s algorithm**, where we start at one node and eventually add other nodes to our tree until we have a MST. As it turns out, it works very similarly to **Dijkstra**. What’s different, though, is that it works even with negative edge weights (even negative cycles). That’s because it doesn’t accumulate distance, it rather just looks at individual edges. We start with any arbitrary node, and then put all outgoing edges into a priority queue, sorted by weights. Then, at each iteration, we pick the next unvisited node with the least edge weight, mark it as visited (and keep track of the edge too), then add all of it’s neighbours that aren’t visited into the priority queue. That gives us exactly the same complexity as **Dijkstra**: O(E log V) time complexity and O(E) space complexity.
+
+The second algorithm is **Kruskal’s algorithm**, where we add edges to our minimum spanning forest until it becomes a tree (or not, if the graph is not connected). Like **Prim’s**, it’s able to work even if there are negative edges. We must keep track of \*CONNECTED-COMPONENTS* so as to avoid cycles in the ST. We first sort all the edges by their weight. At each iteration, we take the edge with the least weight, given it doesn’t form a cycle. We then merge the connected components of the two endpoints, and repeat. Using a **disjoint set** to keep track of connected components, we have basically constant time queries and merges. In total we get O(E log E + V) = O(E log V) time, and O(E) space, the same as Prim’s.
 
 ### Cycles:
 We use **DFS** to find cycles as well as their lengths in both directed and undirected graphs.
 
-#### \*CYCLE-DIR*
-For a directed graph, we keep a stack of all the vertices we have been to. When we backtrack from a vertex, we pop the stack. Then, there is a cycle if we have access to a vertex that is already in the stack. To find the length of this cycle, we can count the degree of separation between the first and the second occurrences of the vertex in the stack. To differentiate between the vertices we’ve already finished traversing and the ones in the stack, we keep track of each node’s state. We can save ourselves the implementation of the stack by using a recursive **DFS**. We could also use a topological sort (\*TOPOLOGICAL-SORT*) instead, although this doesn’t find cycle length.
-
-#### \*CYCLE-UNDIR*
-For an undirected graph, we can easily detect a cycle by running **DFS** and seeing if we ever visit an already visited node. If we wanted to count the length of this cycle, we’d keep a stack just as for a directed graph.
-
-What if we wanted to find all cycles in a graph? If we had an edge list, we could use a **disjoint set** to keep track of all connected components as we iterate through all edges. Whenever we bump into an edge that forms a cycle, we increment a counter. Disclaimer: I do not know if this works for sure, I haven’t proven it.
-
 #### \*CYCLES-DIR*
-For a directed graph, we perform a similar operation to finding one cycle. For nodes numbered 1 to _n_, we start a **DFS** starting at every node 1 ≤ _u_ ≤ _n_, and find all cycles that end again on _u_. The reason the cycle must start at _u_ and end at _u_ is because if there was a graph _a_ → _b_ → _c_ → _d_ → _b_, then the cycle would be counted both when we start at node _a_ and when we start on any of the nodes in the cycle. Also, we must ensure we do not count the cycle more than once when we start at _b_, _c_, or _d_. One way to do this is to keep track of the start node _u_, and ensure during the **DFS** that any _v_ we travel to satisfies _v_ > _u_.
+How do we detect a cycle in a directed graph? We keep a stack of all the vertices we have been to. When we backtrack from a vertex, we pop the stack. Then, there is a cycle if we have access to a vertex that is already in the stack. To find the length of this cycle, we can count the degree of separation between the first and the second occurrences of the vertex in the stack. To differentiate between the vertices we’ve already finished traversing and the ones in the stack, we keep track of each node’s state. We can save ourselves the implementation of the stack by using a recursive **DFS**. We could also use a topological sort (\*TOPOLOGICAL-SORT*) instead, although this doesn’t find cycle length.
+
+To find all cycles in an undirected graph, we perform a similar operation to finding one cycle. For nodes numbered 1 to _n_, we start a **DFS** starting at every node 1 ≤ _u_ ≤ _n_, and find all cycles that end again on _u_. The reason the cycle must start at _u_ and end at _u_ is because if there was a graph _a_ → _b_ → _c_ → _d_ → _b_, then the cycle would be counted both when we start at node _a_ and when we start on any of the nodes in the cycle. Also, we must ensure we do not count the cycle more than once when we start at _b_, _c_, or _d_. One way to do this is to keep track of the start node _u_, and ensure during the **DFS** that any _v_ we travel to satisfies _v_ > _u_.
+
+#### \*CYCLES-UNDIR*
+How do we detect a cycle in an undirected graph? We can easily detect a cycle by running **DFS** and seeing if we ever visit an already visited node. If we wanted to count the length of this cycle, we’d keep a stack just as for a directed graph.
+
+What if we wanted to find all cycles in an undirected graph? If we had an edge list, we could use a **disjoint set** to keep track of all connected components as we iterate through all edges. Whenever we bump into an edge that forms a cycle, we increment a counter. TODO: PROVE THIS. I DO NOT KNOW IF THIS WORKS.
 
 ### Sorts:
 #### \*TOPOLOGICAL-SORT*
