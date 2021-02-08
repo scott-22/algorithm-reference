@@ -40,7 +40,7 @@ Data structures are usually an implementation of a mathematical concept, or at l
 ### Overview:
 All problems involve some form of math, but some problems are exclusively math. Usually the categories of math covered is number theory, combinatorics, algebra, discrete mathematics, and some other stuff. Even geometry is sometimes used. Moral of the story is get good at math.
 
-Note: some nice primes for hashing: 31, 1e9+7, 1<<31 - 1, 1e11+3, 1<<61 - 1
+Note: some nice primes for hashing: 31, 1e9+7, 1<<31 - 1, 1e11+3, 13e15+19
 
 ### Coordinate/Array index compression:
 #### \*COORDCOMPRESS*
@@ -101,6 +101,9 @@ When searching for a single value, the worst case is to look through each value,
 When searching for a pair that either adds or subtracts to a value, the worst case is O(n^2) time, pretty intuitively. However, in a sorted array, we can use the **two pointers** approach to do it in O(n) time. This works since we always move the pointers towards each other. In fact, for subsets of length k (i.e, k random values of the array that add or subtracts to a value), we can do it in O(n^(k-1)) time, since we can go through each element, then take the remaining elements k-1 at a time.
 
 There is another approach to this problem, and it can be a bit more generalized. For searching a pair that sums up to s, you can iterate through every element i, then do a **binary search** for s-a[i]. Thus you can find a pair in O(n log n) time. In fact, for subsets of length k, we can do it in O(n^(k-1) * log n) time, which is always log n times slower than the multiple pointers approach, but the idea can be applied to relatively more problems.
+
+#### *\MAXIMUM-SUBARRAY-SUM*
+To find the max subarray sum, we can use **DP** with **Kadane’s algorithm**. Note that the answer is trivial if all elements are positive. For each element at index _i_ of the array, we store the maximum subarray that ends at that element, denoted as _m(i)_. We use the substructure _m(i) = max(m(i-1)+a[i], a[i])_.
 
 ### Range Queries:
 Obviously the worst case for doing a range query is just to go through each of the values (linear in both array length and query number). There’s often better ways of doing so, either with lazy evaluation or preprocessing.
@@ -218,7 +221,19 @@ Also called mutual recursion. It occurs where two or more functions recursively 
 
 # Strings
 ### Overview:
-String hashing :(
+Most string problems can be reduced to other types of problems (often array problems). Some of them though, such as pattern matching, can’t.
+
+### Pattern Matching
+#### \*MATCH-STRING*
+How would we search for all occurrences of string, let’s say of length _p_, in some other string of length _q_? The naive approach would be to simply loop through for a O(pq) search. However, we can do better with two algorithms, both in O(q) time.
+
+The first quicker way is to do a **Rolling hash**. For this algorithm, we usually do a polynomial hash of a substring, with a certain power _p_ and modulus _m_, both prime numbers. Then, to “roll” the hash we simply subtract the highest degree term, multiply the result by _p_, and finally add the constant term. Then, if this hash matches the hash of our initial string, we have a match!
+
+The second way is to use the **Knuth-Morris-Pratt** or **KMP** algorithm. 
+
+#### \*MATCH-PERMUTED-STRINGS*
+What if we wanted to match all permutations of a certain string within a larger string, and keep track of the number of distinct permutations we encounter?
+
 <a name="graphs"/>
 
 # Graphs
@@ -276,17 +291,12 @@ Otherwise, we can use the **Dijkstra** algorithm, which works if all weights are
 
 **Dijkstra** fails if we have negative weights, so in that case we use the **Bellman-Ford** algorithm. It starts by setting all distances to infinity, and the source distance to 0. Then, for relaxation, instead of finding the node with the least temporary distance, it iterates through all edges and updates the distance of a node if there’s a better path. This is guaranteed to relax at least one node. TODO: PROVE THIS. That’s why we perform this step V-1 times, for a total of O(EV) runtime.
 
-There’s another better algorithm based on **Bellman-Ford**, called the **Shortest Path Faster Algorithm**, or the **SPFA**. Similarly to the other two, it sets all node distances to infinity, and the source to 0. It also uses a queue (normal queue, not priority queue) to keep track of next nodes. At each iteration, it pops a node from the queue, and then relaxes all of its neighbours. Unlike **Dijkstra** however, whenever it updates a neighbouring node, it adds it to the queue (possibly more than once), since there’s a chance it can update other paths from that node. At each node, the algorithm can potentially push all the other edges into the queue, which means it runs in O(EV) time. However, experimentally, it runs in O(E) time, a better complexity than all of the other algorithms. This allows it to always outperform **Bellman-Ford**, and usually **Dijkstra**.
+There’s another better algorithm that can handle negative weights, called the **Shortest Path Faster Algorithm**, or the **SPFA**. Similarly to the other two, it sets all node distances to infinity, and the source to 0. It also uses a queue (normal queue, not priority queue) to keep track of next nodes. At each iteration, it pops a node from the queue, and then relaxes all of its neighbours. Unlike **Dijkstra** however, whenever it updates a neighbouring node, it adds it to the queue (possibly more than once), since there’s a chance it can update other paths from that node. At each node, the algorithm can potentially push all the other edges into the queue, which means it runs in O(EV) time. However, experimentally, it runs in O(E) time, a better complexity than all of the other algorithms. This allows it to always outperform **Bellman-Ford**, and usually **Dijkstra**.
 
 ##### ALL PAIRS
-If we need to find multiple shortest path queries (shortest path between multiple points), it’s usually more efficient to use **Floyd-Warshall**. The Floyd-Warshall algorithm is a dynamic programming algorithm, with O(V^2) space complexity and O(V^3) time complexity. It works for negative weights (no negative cycles though) as well. For denser graphs, this beats out running **Dijkstra** V times resulting in O(VE log V) → O(V^3 log V). The substructure used is that  
+If we need to find multiple shortest path queries (shortest path between multiple points), it’s usually more efficient to use **Floyd-Warshall**. The Floyd-Warshall algorithm is a dynamic programming algorithm, with O(V^2) space complexity and O(V^3) time complexity. It works for negative weights (no negative cycles though) as well. For denser graphs, this beats out running **Dijkstra** V times resulting in O(VE log V) → O(V^3 log V). The DP transition used is that  
 _distance(i, j, k) = min(distance(i, j, k-1), distance(i, k-1, k-1)+distance(k-1, j, k-1))_  
 where _distance(i, j, k)_ represents the minimum distance from _i_ to _j_ where the path only consists of those two nodes and optionally the nodes from 1 to _k_. It’s quite easy to see why it runs in cubic time, and by iterating through _k_ (similar to the space optimized knapsack) we only need quadratic space.
-
-#### \*KTH-SHORTEST-PATH*
-This problem is similar to the \*SHORTEST-PATH* problem, but instead of finding the shortest, we find the k-th shortest (either strictly, i.e. the k-th minimum out of all possible path _lengths_, or non-strictly, i.e. the k-th minimum out all possible _paths_).
-
-There’s a special case to consider for the second shortest path if we know the start node _s_ and the end node _k_. This technique works for the strictly 2nd shortest path in undirected graphs. We can compute it by solving \*SHORTEST-PATH* twice: once from the beginning and once from the end. This is a very useful technique that’s used very often for all sorts of graph problems. Then, for each edge _<u, v>_, we find _dst(s, u) + <u, v> + dst(v, k)_. If this value is greater than the shortest path, we consider it as a potential 2nd shortest path. TODO: PROVE THIS. If we’re allowed to visit each edge more than once, we can simply perform the same thing with the edge _<v, u>_.
 
 #### \*BOTTLENECK-PATH*
 What’s referred to as the widest path problem defines the bottleneck of a path to be the edge with the least weight that makes up this path. The problem seeks to find the shortest path that maximizes the value of the bottleneck (in other words, the shortest path that maximizes the minimum value of any of the edges it’s made up of), akin to the maximin problem from other fields of math. It’s also often useful to do the opposite: to find the path that minimizes the maximum edge weight in a graph, akin to the minimax problem.
@@ -300,6 +310,17 @@ The process is almost exactly the same for the minimax equivalent. However, for 
 One way to find the path with the maximum bottleneck is to create a _maximum_ spanning tree, which is almost exactly the same as the \*MINIMUM-SPANNING-TREE*  problem. This only works on undirected graphs. Once we have our MST, it’s quite simple to find the single path between each two nodes using a transversal in O(n) time.
 
 The minimax equivalent of this is quite literally the \*MINIMUM-SPANNING-TREE* problem.
+
+#### \*KTH-SHORTEST-PATH*
+This problem is similar to the \*SHORTEST-PATH* problem, but instead of finding the shortest, we find the k-th shortest (either strictly, i.e. the k-th minimum out of all possible path _lengths_, or non-strictly, i.e. the k-th minimum out all possible _paths_).
+
+##### \SECOND-SHORTEST-PATH
+There’s a special case to consider for the second shortest path if we know the start node _s_ and the end node _k_. This technique works for the strictly 2nd shortest path. We can compute it by solving \*SHORTEST-PATH* twice: once from the beginning and once from the end (so we have a prefix shortest distance and a suffix shortest distance). This is a very useful technique that’s used often for all sorts of graph problems, not just the second shortest path. Note that if the graph is directed then we need to reverse it before calculating the suffix shortest path. Then, for each edge _<u, v>_, we find _dst(s, u) + <u, v> + dst(v, k)_. If this value is greater than the shortest path, we consider it as a potential 2nd shortest path. TODO: PROVE THIS. If we’re allowed to visit each edge more than once, we can simply perform the same thing with the edge _<v, u>_.
+
+#### \*SHORTEST-PATH-WITH-SECONDARY-RESTRICTION*
+We define each edge to have a weight _w_ and a secondary weight _k_.  The shortest path with secondary restriction should find the path with the minimum weight (sum of _w_) that satisfies the fact that the sum of all _k_ should be less than a certain _K_. To solve this, we modify **Dijkstra**. We keep track of the shortest path to each node that has a _k_ sum of exactly _ki_, for 1 ≤ _i_ ≤ _K_. This gives us O(VK) storage complexity, with the same time complexity (but worse runtime than normal **Dijkstra** in practice, given that every edge will likely be used).
+
+Sometimes the problem is defined in another way: we define each edge to have weight _w_ and a secondary weight _k_. The shortest path with the secondary restriction should find the path with the minimum sum of _w_, and then break ties with the second sum of _k_. Here, we modify **Dijkstra** again, where we compare paths by first comparing their _w_ sum, and then their _k_ sum. This has the same time and space complexity as normal.
 
 ### Components:
 #### \*CONNECTED-COMPONENTS*
@@ -346,9 +367,26 @@ The second is through a **DFS** and a stack, and keeping track of all vertices�
 
 # Dynamic Programming
 ### Overview:
-Can be used to solve problems with optimal substructure. If the optimal solution to a problem can be determined by the optimal solution to a subproblem, then a greedy algorithm should work. However, if it can only be determined by the optimal solution to multiple subproblems, then dynamic programming should be used.
+Can be used to solve optimization problems or counting problems that have optimal substructure. If the optimal solution to a problem can be determined by the optimal solution to a subproblem, then a greedy algorithm should work. However, if it can only be determined by the optimal solution to multiple subproblems, then dynamic programming should be used.
 
-In theory, it recursively breaks a problem _P_(_n_) into multiple subproblems
-_P1_(_n_-1)… _Pk_(_n_-1), and stores the answers of subproblems _Pi_(_j_) such that _j_ < _n_ in a data structure, to ensure that the same problems are not calculated multiple times.
+In theory, it recursively breaks a problem _P(n)_ into multiple subproblems
+_P1(n - d1)… Pk(n - dk)_, and stores the answers of subproblems _Pi(j)_ such that _j_ < _n_ in a data structure, to ensure that the same problems are not calculated multiple times. This equation is referred to as a DP transition, and usually the first step to a DP problem would be to identify this equation.
 
+There are usually two approaches to achieving DP: top-down and bottom-up. Top-down approaches are recursive in nature, calculating a subproblem when it is needed and storing its value. It usually uses a process called **memoization**, basically remembering the answer to a subproblem when we need to calculate it. Bottom-up approaches are iterative in nature, calculating the answer to every query and storing it in a table. For this reason, this process is called **tabulation**.
 
+### Knapsacks:
+Many problems can be reduced into some form of the knapsack problem. It involves a theoretical knapsack with a weight capacity of _W_. There are _n_ given objects, each with weight _wi_ and value _vi_, for 1 ≤ _i_ ≤ _n_. The objective is to maximize the total sum of values of the objects we can put in the knapsack such that the total weight is within the knapsack’s capacity. It can be easily shown (by counterexample) that greedy solutions for multiple knapsack problems won’t work. The different variants of problems are below.
+
+#### \*0-1-KNAPSACK*
+The 0-1 Knapsack problem is pretty straightforward: for each weight, we can either take it or not. As with most knapsack problems, we consider each weight individually. Our DP transition is  
+_maxV(w, i) = max(maxV(w, i-1), vi+maxV(w-wi, i-1))_  
+where _maxV(w, i)_ is the maximum value attainable for a knapsack of weight _w_ only considering the first _i_ objects. What this does is that for each weight, we consider the case of whether we take it or not, and find the maximum of the two cases. How do we calculate this then? One way is to create a 2D array _maxV[n][W]_, and then for each weight we then iterate through and find the answer from the entries in the previous row. This stores every single optimal answer up to our actual weight capacity _W_, and works in O(_W*n_) complexity for both time and space.
+
+Since we only use entries from the previous row, we can optimize it for space a little. In fact, we can only store a single array _maxV[W]_. Then, we simply update all the values starting from the end, allowing us to have O(_W_) space complexity but with the same time complexity.
+
+If our weights are exceedingly large and our different values are by comparison smaller, we can modify the table a bit. Notice that we can store the minimum weight required to achieve each value, also by iterating through each element. Our DP transition becomes  
+_minW(v, i) = min(minW(v, i-1), wi+minW(v-vi, i-1))  
+where _minW(v, i)_ is the minimum weight required to achieve a value of exactly _v_ using the first _i_ objects. At the beginning, we would need to initialize all minimum weights to infinity, and set the minimum weight of 0 to always be 0. Then, we can find the answer in O(_V*n_) time (assuming _V_ is the sum of all the values of all objects), and either O(_V*n_) or O(_V_) space, depending on how we initialize the array.
+
+#### \*EXACT-0-1-KNAPSACK*
+What if the problem instead asked for the knapsack to be filled exactly to capacity, even if it meant decreasing the value? The modification is actually exceedingly simple: we simply initialize the array to store negative infinity as the max value for each weight, except for 0. Then, we simply perform the knapsack algorithm as usual. It’s not difficult to see why this works.
