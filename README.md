@@ -102,7 +102,7 @@ When searching for a pair that either adds or subtracts to a value, the worst ca
 
 There is another approach to this problem, and it can be a bit more generalized. For searching a pair that sums up to s, you can iterate through every element i, then do a **binary search** for s-a[i]. Thus you can find a pair in O(n log n) time. In fact, for subsets of length k, we can do it in O(n^(k-1) * log n) time, which is always log n times slower than the multiple pointers approach, but the idea can be applied to relatively more problems.
 
-#### *\MAXIMUM-SUBARRAY-SUM*
+#### \*MAXIMUM-SUBARRAY-SUM*
 To find the max subarray sum, we can use **DP** with **Kadane’s algorithm**. Note that the answer is trivial if all elements are positive. For each element at index _i_ of the array, we store the maximum subarray that ends at that element, denoted as _m(i)_. We use the substructure _m(i) = max(m(i-1)+a[i], a[i])_.
 
 ### Range Queries:
@@ -134,7 +134,7 @@ For longest increasing/decreasing subsequences, the naive solution is recursive,
 Let’s say we had an array to be split into k contiguous subarrays, and we’d like to maximize the sum of any subarray. The naive solution would be to iterate through and find each of the k subarrays, which even if we used a **PSA** to find the sum, it would still take O(n^(k-1)) time. Rather, we could do a binary search of the maximum value. Let’s say the total sum of the array was z. We would binary search all the values between 1 and z, and set it as the maximum. Then, we can iterate through the **PSA** and mark off whenever we surpass that value, and see if we have more or less groups than the target value k. Thus, we would only need O(n log z) time, which can be much less depending on the value of z.
 
 #### \*PAINTERS-PARTITION*
-The most generalized form of this problem is to split an array into k contiguous subarrays such that
+The most generalized form of the painter’s partition problem is to split an array into k contiguous subarrays such that
 1. The difference between the largest and smallest sums of all subarrays is minimized,
 or
 2. The largest sum of all subarrays is minimized.
@@ -375,7 +375,7 @@ _P1(n - d1)… Pk(n - dk)_, and stores the answers of subproblems _Pi(j)_ such t
 There are usually two approaches to achieving DP: top-down and bottom-up. Top-down approaches are recursive in nature, calculating a subproblem when it is needed and storing its value. It usually uses a process called **memoization**, basically remembering the answer to a subproblem when we need to calculate it. Bottom-up approaches are iterative in nature, calculating the answer to every query and storing it in a table. For this reason, this process is called **tabulation**.
 
 ### Knapsacks:
-Many problems can be reduced into some form of the knapsack problem. It involves a theoretical knapsack with a weight capacity of _W_. There are _n_ given objects, each with weight _wi_ and value _vi_, for 1 ≤ _i_ ≤ _n_. The objective is to maximize the total sum of values of the objects we can put in the knapsack such that the total weight is within the knapsack’s capacity. It can be easily shown (by counterexample) that greedy solutions for multiple knapsack problems won’t work. The different variants of problems are below.
+Many problems can be reduced into some form of the knapsack problem. It involves a theoretical knapsack with a weight capacity of _W_. There are _n_ given objects/weights, each with weight _wi_ and value _vi_, for 1 ≤ _i_ ≤ _n_. The objective is to maximize the total sum of values of the objects we can put in the knapsack such that the total weight is within the knapsack’s capacity. It can be easily shown (by counterexample) that greedy solutions for multiple knapsack problems won’t work. The different variants of problems are below.
 
 #### \*0-1-KNAPSACK*
 The 0-1 Knapsack problem is pretty straightforward: for each weight, we can either take it or not. As with most knapsack problems, we consider each weight individually. Our DP transition is  
@@ -390,3 +390,11 @@ where _minW(v, i)_ is the minimum weight required to achieve a value of exactly 
 
 #### \*EXACT-0-1-KNAPSACK*
 What if the problem instead asked for the knapsack to be filled exactly to capacity, even if it meant decreasing the value? The modification is actually exceedingly simple: we simply initialize the array to store negative infinity as the max value for each weight, except for 0. Then, we simply perform the knapsack algorithm as usual. It’s not difficult to see why this works.
+
+#### \*UNLIMITED-KNAPSACK*
+A common variant is where we have potentially infinite of each object, with the rest of the conditions being identical. How do we solve the problem this time? Let’s write out a DP transition: again, we can either take each object or not, and we look at all the objects one at a time. However, when we take an object, we don’t necessarily decrease the number of objects we look at, since we could take the same object again. This leads to the following transition (with the same variables as above):  
+_maxV(w, i) = max(maxV(w, i-1), vi+maxV(w-wi, i))_  
+Note the only difference is we have _i_ rather than _i-1_ at the end. And, to solve the problem we use largely the same approach: we can store the max value for all weights up to _W_, but move from the beginning instead of from the end (since we need to access values of the current row, not of the previous row).
+
+#### \*LIMITED-KNAPSACK*
+Yet another common variation is where we have a finite amount _k_ of each type of object, with the same constraints.
