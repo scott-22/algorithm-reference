@@ -62,14 +62,11 @@ In order to find the representative of a node, we need to go up the tree, which 
 Another technique to reduce the running time of a disjoint set is **union by rank**. We keep track of the maximum possible depth of any set, and then when merging two sets, we use the representative from the set with the least maximum depth. With these two modifications, the running time becomes almost an amortized constant (I have no idea why it’s the inverse of the Ackermann function, probably some advanced maths).
 
 #### \*STD::SET/BST*
-There’s a lot of really useful uses of the std::set, many of which I’m not very adept at doing. Ultimately, a std::set can do exactly what it’s meant to do: keep track of which items belong in it or not. This can extend to a few uses, from keeping track of the availability of things to the distance of nodes in a graph. There’s four things to keep in mind:  
-<ol>
-	<li>std::set::insert() and std::set::erase() can add, remove, and also sort of edit (be removing, updating, then inserting again) items in O(log n) time</li>
-	<li>std::set::lower_bound() can do a search within the set in O(log n) time, so it’s extremely simple to find elements that are greater/less than/equal compared to a certain element</li>
-	<li>std::set::begin() returns an iterator to the least element, std::set::rbegin() returns an iterator to the greatest element, so getting the minimum/maximum of a set is simple</li>
-	<li>std::set<object> can store any object that has the < operator defined (e.g. std::pairs), which can come in handy for storing and updating distances or any other value associated with a node</li>
-</ol>
-a
+There’s a lot of really useful uses of the std::set, many of which I’m not very adept at doing. Ultimately, a std::set can do exactly what it’s meant to do: keep track of which items belong in it or not. This can extend to a few uses, from keeping track of the availability of things to the distance of nodes in a graph. There’s four things to keep in mind:
+1. std::set::insert() and std::set::erase() can add, remove, and also sort of edit (be removing, updating, then inserting again) items in O(log n) time
+2. std::set::lower_bound() can do a search within the set in O(log n) time, so it’s extremely simple to find elements that are greater/less than/equal compared to a certain element
+3. std::set::begin() returns an iterator to the least element, std::set::rbegin() returns an iterator to the greatest element, so getting the minimum/maximum of a set is simple
+4. std::set&lt;object&gt; can store any object that has the &lt; operator defined (e.g. std::pairs), which can come in handy for storing and updating distances or any other value associated with a node
 
 ### Binary exponentiation:
 a^b = (a^(b/2))^2
